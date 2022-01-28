@@ -67,7 +67,7 @@ def login():
             if res[0]['user_type'] == 2:
                 return redirect(url_for('upload', user_id=res[0]['user_id']))
             else:
-                print('SIMPLE USER RESTRICTED', flush=True)
+                return redirect(url_for('stats', user_name=username))
         else:
             message = "Wrong username or password"
 
@@ -131,6 +131,52 @@ def upload(user_id):
 
 
     return render_template('upload.html')
+
+@app.route('/stats/<user_name>', methods=['GET', 'POST'])
+def stats(user_name):
+    if request.method == 'GET':
+        all_objects = 0
+        marked_objects = 0
+        classification_instances = ""
+
+        q = f"""
+            select count(da.image_id) as count from image_availability da
+            join users u on da.user_id = u.user_id and u.user_name = '{user_name}'
+            where da.user_id = u.user_id;
+        """
+        res = read_db(q)
+        if len(res) > 0:
+            all_objects = res[0]['count']
+
+        q = f"""
+            select count(ui.classification) as count from user_images ui
+            join users u on ui.user_id = u.user_id and u.user_name = '{user_name}'
+            where ui.user_id = u.user_id;
+        """
+        res = read_db(q)
+        if len(res) > 0:
+            marked_objects = res[0]['count']
+
+        q = f"""
+            select ui.classification, count(ui.classification) as count from user_images ui
+            join users u on ui.user_id = u.user_id and u.user_name = '{user_name}'
+            where ui.user_id = u.user_id
+            group by ui.classification;
+        """
+        res = read_db(q)
+        if len(res) > 0:
+            for instance in res:
+                classification_instances += '\n' + f"{instance['classification']}: {instance['count']}"
+
+
+        return render_template('stats.html',
+                               user_name=user_name,
+                               all_objects=all_objects,
+                               marked_objects=marked_objects,
+                               classification_instances=classification_instances)
+    else:
+
+        return redirect(url_for('login'))
 
 if __name__ == "__main__":
     app.run(host=_HOST, port=_PORT)

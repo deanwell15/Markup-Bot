@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Stats</title>
+</head>
+<body>
+
+    <p>Статистика пользователя {{ user_name }}:</p>
+
+	{% if all_objects %}
+        <p>Общее количество объектов:{{ all_objects }}</p>
+    {% endif %}
+
+    {% if marked_objects %}
+        <p>Количество размеченных объектов:{{ marked_objects }}</p>
+    {% endif %}
+
+    {% if classification_instances %}
+        <p>Сущности:{{ classification_instances }}</p>
+    {% endif %}
+
+    <form method=post>
+      <p><input type=submit value="Выйти"></p>
+    </form>
+
+</body>
+</html>
