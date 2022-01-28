@@ -1,0 +1,11 @@
+FROM python:3.8-alpine
+ENV APP /back
+RUN mkdir $APP
+WORKDIR $APP
+
+COPY ./requirements_back.txt .
+RUN pip3 install -r requirements_back.txt
+
+COPY .$APP/* ./
+
+CMD python3 back.py
