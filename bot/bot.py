@@ -8,7 +8,7 @@ import json
 import redis
 
 #Токен бота
-_TOKEN = '5246100341:AAE_p0iBWa7sdn0O5He01rCdyx-DLI2a_5E'
+_TOKEN = 'YOUR TOKEN FROM BOTFATHER HERE'
 bot = telebot.TeleBot(_TOKEN)
 
 r = redis.Redis(host='redis', port=6379, db=0, password='pass', charset='utf-8', errors='strict')
